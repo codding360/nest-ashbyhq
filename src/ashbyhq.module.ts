@@ -1,8 +1,12 @@
 import { DynamicModule, Module, Provider, Type } from '@nestjs/common';
+import { Global } from '@nestjs/common';
+
+import { ConfigOptions } from './types/global';
+
 import { AshbyhqService } from './ashbyhq.service';
 import { CandidateService } from './services/candidate.service';
-import { ConfigOptions } from './types/global';
-import { Global } from '@nestjs/common';
+import { ApplicationService } from './services/application.service';
+import { JobService } from './services/job.service';
 
 export interface AshbyhqAsyncOptions {
   imports?: Type<any>[];
@@ -23,8 +27,10 @@ export class AshbyhqModule {
         },
         AshbyhqService,
         CandidateService,
+        ApplicationService,
+        JobService,
       ],
-      exports: [AshbyhqService, CandidateService],
+      exports: [AshbyhqService, CandidateService, ApplicationService, JobService],
     };
   }
 
@@ -40,8 +46,10 @@ export class AshbyhqModule {
         },
         AshbyhqService,
         CandidateService,
+        ApplicationService,
+        JobService,
       ],
-      exports: [AshbyhqService, CandidateService],
+      exports: [AshbyhqService, CandidateService, ApplicationService, JobService],
     };
   }
 
