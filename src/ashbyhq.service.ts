@@ -50,13 +50,13 @@ export class AshbyhqService {
   private handleError<T>(error: AxiosError<T>): T {
     switch (error.response?.status) {
       case HttpStatusCode.Unauthorized:
-        throw new UnauthorizedError();
+        throw new UnauthorizedError(error.message);
       case HttpStatusCode.BadRequest:
-        throw new BadRequestError();
+        throw new BadRequestError(error.message);
       case HttpStatusCode.InternalServerError:
-        throw new InternalError();
+        throw new InternalError(error.message);
       case HttpStatusCode.NotFound:
-        throw new NotFoundError();
+        throw new NotFoundError(error.message);
       default:
         console.error(error);
         throw new Error(Errors.SOMETHING_WENT_WRONG);
