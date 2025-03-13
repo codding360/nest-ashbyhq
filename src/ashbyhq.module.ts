@@ -2,6 +2,7 @@ import { DynamicModule, Module, Provider, Type } from '@nestjs/common';
 import { AshbyhqService } from './ashbyhq.service';
 import { CandidateService } from './services/candidate.service';
 import { ConfigOptions } from './types/global';
+import { Global } from '@nestjs/common';
 
 export interface AshbyhqAsyncOptions {
   imports?: Type<any>[];
@@ -9,6 +10,7 @@ export interface AshbyhqAsyncOptions {
   inject?: any[];
 }
 
+@Global()
 @Module({})
 export class AshbyhqModule {
   static forRoot(options: ConfigOptions): DynamicModule {
@@ -27,13 +29,15 @@ export class AshbyhqModule {
   }
 
   static forRootAsync(options: AshbyhqAsyncOptions): DynamicModule {
-    const asyncProviders = this.createAsyncProviders(options);
-
     return {
       module: AshbyhqModule,
       imports: options.imports || [],
       providers: [
-        ...asyncProviders,
+        {
+          provide: 'ASHBY_HQ_OPTIONS',
+          useFactory: options.useFactory,
+          inject: options.inject || [],
+        },
         AshbyhqService,
         CandidateService,
       ],

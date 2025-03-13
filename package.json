@@ -1,6 +1,6 @@
 {
   "name": "nest-ashbyhq",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "NestJS package for Ashby HQ client",
   "author": "MaratSharshenaliev",
   "private": false,
