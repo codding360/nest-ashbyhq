@@ -7,7 +7,6 @@ import {
   FileHandle,
   ICreditedToUser,
   IPrimaryLocation,
-  ILocationComponent
 } from './global';
 import { ICustomField, ISource } from './utils';
 
