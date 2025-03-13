@@ -1,47 +1,141 @@
-# Ashby HQ Client
+# Ashby HQ Client for NestJS
 
-A NestJS package for interacting with Ashby HQ API.
+A NestJS module for interacting with the Ashby HQ API.
 
 ## Installation
 
 ```bash
-npm install ashbyhq-client
+npm install @your-org/ashbyhq-client
 ```
 
 ## Usage
 
+### Module Configuration
+
+You can configure the module in two ways:
+
+1. Using `forRoot`:
+
 ```typescript
-import { AshbyhqModule } from 'ashbyhq-client';
+import { Module } from '@nestjs/common';
+import { AshbyhqModule } from '@your-org/ashbyhq-client';
 
 @Module({
   imports: [
     AshbyhqModule.forRoot({
       auth: {
-        // Use either username/password or apiKey
-        username: 'your-username',
-        password: 'your-password',
-        // OR
-        apiKey: 'your-api-key'
+        apiKey: 'your_api_key_here'
       },
-      // Optional configurations
-      baseURL: 'https://api.ashbyhq.com', // default
-      timeout: 10000, // default: 10 seconds
-      headers: {
-        // Additional headers if needed
-      }
-    }),
-  ],
+      baseURL: 'https://api.ashbyhq.com', // optional
+      timeout: 5000 // optional
+    })
+  ]
+})
+export class AppModule {}
+```
+
+2. Using `forRootAsync` (recommended for dynamic configuration):
+
+```typescript
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AshbyhqModule } from '@your-org/ashbyhq-client';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot(),
+    AshbyhqModule.forRootAsync({
+      auth: {
+        apiKey: process.env.ASHBY_API_KEY
+      },
+      baseURL: process.env.ASHBY_API_URL, // optional
+      timeout: 5000 // optional
+    })
+  ]
 })
 export class AppModule {}
 ```
 
 ### Using the Services
 
-#### Base Service
+Once configured, you can inject and use the services in your application:
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { AshbyhqService } from 'ashbyhq-client';
+import { CandidateService } from '@your-org/ashbyhq-client';
+
+@Injectable()
+export class YourService {
+  constructor(private readonly candidateService: CandidateService) {}
+
+  async createCandidate() {
+    const candidate = await this.candidateService.create({
+      name: 'John Doe',
+      email: 'john@example.com'
+    });
+    return candidate;
+  }
+}
+```
+
+## Available Services
+
+### CandidateService
+
+The `CandidateService` provides methods for managing candidates:
+
+- `create(input: CreateCandidateInput)`: Create a new candidate
+- `list(pagination?: Pagination)`: List candidates
+- `search(input: GetCandidateInput)`: Search candidates
+- `find(id: string, idType?: 'internal' | 'external')`: Find a candidate by ID
+- `update(id: string, input: UpdateCandidateInput)`: Update a candidate
+- `uploadResume(candidateId: string, formData: FormData)`: Upload a resume for a candidate
+
+## Environment Variables
+
+When using `forRootAsync`, you can configure these environment variables:
+
+```env
+ASHBY_API_KEY=your_api_key_here
+ASHBY_API_URL=https://api.ashbyhq.com
+```
+
+## Error Handling
+
+The client includes built-in error handling for common API responses:
+
+- `UnauthorizedError`: 401 authentication errors
+- `BadRequestError`: 400 validation errors
+- `NotFoundError`: 404 resource not found
+- `InternalError`: 500 server errors
+
+Example error handling:
+
+```typescript
+try {
+  const candidate = await candidateService.find('non_existent_id');
+} catch (error) {
+  if (error instanceof NotFoundError) {
+    console.log('Candidate not found');
+  }
+}
+```
+
+## Types
+
+The package includes TypeScript definitions for all API responses and inputs. Key types include:
+
+- `ICandidate`: Candidate interface
+- `CreateCandidateInput`: Input for creating candidates
+- `UpdateCandidateInput`: Input for updating candidates
+- `Response<T>`: Generic API response
+- `ListResponse<T>`: Paginated list response
+
+### Base Service
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { AshbyhqService } from '@your-org/ashbyhq-client';
 
 @Injectable()
 export class YourService {
@@ -54,7 +148,7 @@ export class YourService {
 }
 ```
 
-#### Candidate Service
+### Candidate Service
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -65,7 +159,7 @@ import {
   ICandidate,
   FindCandidateInput,
   Pagination
-} from 'ashbyhq-client';
+} from '@your-org/ashbyhq-client';
 
 @Injectable()
 export class YourService {
@@ -179,16 +273,6 @@ interface ListResponse<T> {
   readonly syncToken?: string;
 }
 ```
-
-### Error Handling
-
-The package includes built-in error handling for common HTTP status codes:
-
-- UnauthorizedError (401)
-- BadRequestError (400)
-- InternalError (500)
-- NotFoundError (404)
-- EmailNameError (When searching candidates without email or name)
 
 ## License
 
