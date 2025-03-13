@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigOptions } from '../types/global';
 import { ListJobInput, ListJobResponse } from '../types/job.types';
 
-import { AshbyhqService } from 'src/ashbyhq.service';
+import { AshbyhqService } from '../ashbyhq.service';
 
 @Injectable()
 export class JobService extends AshbyhqService {

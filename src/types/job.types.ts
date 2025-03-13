@@ -1,5 +1,5 @@
-import { Pagination, Status, Response , ListResponse} from "@/types/global";
-import { ICustomField, IHiringTeam,  } from "@/types/utils";
+import { Pagination, Status, Response , ListResponse} from "./global";
+import { ICustomField, IHiringTeam,  } from "./utils";
 
 type Expand = "openings" | "location";
 export type OpeningStateType = "Approved" | "Closed" | "Draft" | "Filled" | "Open";
